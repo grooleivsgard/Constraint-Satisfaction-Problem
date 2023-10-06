@@ -2,6 +2,8 @@
 # Original code by Håkon Måløy
 # Updated by Xavier Sánchez Díaz
 
+# Final solution implemented by Gro Elisabeth Oleivsgard
+
 import copy
 from itertools import product as prod
 
@@ -172,8 +174,8 @@ class CSP:
         assignments and inferences that took place in previous
         iterations of the loop.
         """
-        # TODO: YOUR CODE HERE
 
+        self.backtrack_call += 1
         # Assignment is complete if length of all variables is 1
         if all(len(var) == 1 for var in assignment.values()):
             return assignment
@@ -192,7 +194,6 @@ class CSP:
                 result = self.backtrack(deep_copy)
                 # If the assignment is valid, return the result
                 if result is not None:
-                    self.backtrack_call += 1
                     return result
         self.backtrack_fail += 1
         return None
@@ -200,6 +201,7 @@ class CSP:
     def order_domain_values(self, assignment, var):
         # Return current domain of variable in default order
         return assignment[var]
+
     def select_unassigned_variable(self, assignment):
         """The function 'Select-Unassigned-Variable' from the pseudocode
         in the textbook. Should return the name of one of the variables
@@ -257,7 +259,6 @@ class CSP:
         between i and j, the value should be deleted from i's list of
         legal values in 'assignment'.
         """
-        # TODO: YOUR CODE HERE
 
         revised = False
 
@@ -265,7 +266,8 @@ class CSP:
         for x in assignment[i]:
             # Check potential constraint between i and j
             if not any((x, y) in self.constraints[i][j] for y in assignment[j]):
-                assignment[i].remove(x)  # Prune the domain by removing value x that does not satisfy the constraint b/w (i,j)
+                assignment[i].remove(
+                    x)  # Prune the domain by removing value x that does not satisfy the constraint b/w (i,j)
                 revised = True
         return revised
 
@@ -348,17 +350,18 @@ def print_sudoku_solution(solution):
             print('------+-------+------')
 
 
-
 # ----- PRINT RESULTS ----------
 
 difficulties = [("Easy:", "easy.txt"),
                 ("Medium:", "medium.txt"),
-                ("Hard:", "hard.txt")]
+                ("Hard:", "hard.txt"),
+                ("Very hard:", "veryhard.txt"),
+                ]
 
 for difficulty, filename in difficulties:
     print(difficulty)
     sudoku_csp = create_sudoku_csp(filename)
     print_sudoku_solution(sudoku_csp.backtracking_search())
-    print("Backtrack called " + str(sudoku_csp.backtrack_call) + " times")
-    print("Backtrack failed " + str(sudoku_csp.backtrack_fail) + " times")
+    print("Backtrack was called " + str(sudoku_csp.backtrack_call) + " times")
+    print("and failed " + str(sudoku_csp.backtrack_fail) + " times")
     print("-----")
